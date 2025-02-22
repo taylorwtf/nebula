@@ -51,7 +51,7 @@ npm install
 3. Create a `.env.local` file in the root directory:
 ```env
 NEBULA_API_KEY=your_nebula_api_key
-NEXT_PUBLIC_NEBULA_CLIENT_ID=your_nebula_client_id
+NEXT_PUBLIC_NEBULA_CLIENT_ID=your_nebula_client_id (thirdweb client id)
 ```
 
 4. Run the development server:
