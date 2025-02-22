@@ -39,8 +39,8 @@ A modern, real-time chat interface for interacting with blockchain data using Th
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/nebula-chat.git
-cd nebula-chat
+git clone https://github.com/taylorwtf/nebula.git
+cd nebula
 ```
 
 2. Install dependencies:
@@ -51,7 +51,7 @@ npm install
 3. Create a `.env.local` file in the root directory:
 ```env
 NEBULA_API_KEY=your_nebula_api_key
-NEXT_PUBLIC_NEBULA_CLIENT_ID=your_client_id
+NEXT_PUBLIC_NEBULA_CLIENT_ID=your_nebula_client_id
 ```
 
 4. Run the development server:
@@ -63,8 +63,11 @@ npm run dev
 
 ## Environment Variables
 
-- `NEBULA_API_KEY`: Your ThirdWeb Nebula API key
-- `NEXT_PUBLIC_NEBULA_CLIENT_ID`: Your ThirdWeb Client ID
+Required environment variables:
+- `NEBULA_API_KEY`: Your ThirdWeb Nebula API key for chat functionality
+- `NEXT_PUBLIC_NEBULA_CLIENT_ID`: Your ThirdWeb Nebula Client ID
+
+You can obtain these from the [ThirdWeb Dashboard](https://thirdweb.com/dashboard/settings/api-keys)
 
 ## Project Structure
 
