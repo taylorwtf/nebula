@@ -4,6 +4,8 @@ By [TAYLOR.WTF](https://taylor.wtf)
 
 A modern, real-time chat interface for interacting with blockchain data using ThirdWeb's Nebula API. Built with Next.js 14, TypeScript, and Tailwind CSS.
 
+![Nebula Chat](public/screenshot.png)
+
 ## Demo
 
 Experience real-time blockchain interactions with a beautiful, responsive interface:
