@@ -2,20 +2,129 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 255, 255, 255;
-  --background-rgb: 17, 24, 39;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0a0a0f;
+    --foreground: #ffffff;
+    --paper-light: rgba(255, 255, 255, 0.01);
+    --paper-dark: rgba(0, 0, 0, 0.1);
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    background: linear-gradient(
+      135deg,
+      #0a0a0f 0%,
+      #13111c 25%,
+      #160f1d 50%,
+      #13111c 75%,
+      #0a0a0f 100%
+    );
+    background-size: 400% 400%;
+    animation: aurora 45s ease infinite;
+  }
+
+  h1, h2, h3, h4, .display {
+    @apply font-display font-semibold tracking-tight;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .glass-panel {
+    @apply bg-[#12121a]/80 backdrop-blur-2xl rounded-2xl shadow-xl;
+    border: 1px solid var(--paper-light);
+  }
+  
+  .glass-input {
+    @apply bg-[#12121a]/50 backdrop-blur-xl rounded-xl
+           focus:border-primary/20 focus:ring-1 focus:ring-primary/20
+           transition-all duration-200;
+    border: 1px solid var(--paper-light);
+  }
+
+  .sidebar-collapse-btn {
+    @apply flex items-center justify-center w-8 h-8 rounded-full
+           bg-[#12121a]/80 backdrop-blur-xl
+           hover:bg-[#12121a] transition-all duration-200
+           border border-white/[0.02] shadow-lg;
+  }
+
+  .sidebar-collapse-btn svg {
+    @apply w-4 h-4 text-primary/80;
+    filter: drop-shadow(0 0 4px rgba(236, 72, 153, 0.3));
+  }
+
+  .gradient-border {
+    @apply relative before:absolute before:inset-0 
+           before:rounded-xl before:p-[1px]
+           before:bg-gradient-to-r before:from-primary/10 
+           before:via-accent/10 before:to-primary/10
+           before:opacity-0 before:transition-opacity;
+  }
+
+  .gradient-border:hover,
+  .gradient-border:focus-within {
+    @apply before:opacity-100;
+  }
+
+  .primary-button {
+    @apply px-6 py-3 bg-gradient-to-r from-primary/90 to-accent/90
+           text-white rounded-xl font-medium
+           hover:shadow-glow transition-all duration-200
+           disabled:from-gray-800 disabled:to-gray-900 
+           disabled:shadow-none disabled:cursor-not-allowed;
+  }
+
+  .secondary-button {
+    @apply px-6 py-3 bg-[#12121a]/50 hover:bg-[#12121a]/70
+           text-white/90 rounded-xl font-medium
+           transition-all duration-200
+           disabled:bg-[#12121a]/30 disabled:cursor-not-allowed;
+    border: 1px solid var(--paper-light);
+  }
+
+  .nebula-heading {
+    @apply font-display font-bold bg-gradient-to-r from-primary-light via-accent-light to-primary-light 
+           bg-clip-text text-transparent bg-[length:200%_auto] 
+           animate-[gradient_8s_linear_infinite];
+  }
+}
+
+@keyframes aurora {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(236, 72, 153, 0.2);
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(236, 72, 153, 0.3);
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(236, 72, 153, 0.2) rgba(0, 0, 0, 0.2);
 }

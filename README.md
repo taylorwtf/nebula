@@ -6,6 +6,15 @@ A modern, real-time chat interface for interacting with blockchain data using Th
 
 ![Nebula Chat](public/screenshot.png)
 
+## Demo
+
+![Contract Deployment](public/contract.png)
+![Transaction Handler](public/transaction.png)
+
+https://user-images.githubusercontent.com/YOUR_GITHUB_USER_ID/nebula/assets/mov.mov
+
+<video src="public/mov.mov" controls title="Nebula Chat Demo"></video>
+
 ## Features
 
 - 🌐 Real-time blockchain data interaction
@@ -16,6 +25,17 @@ A modern, real-time chat interface for interacting with blockchain data using Th
 - 📝 Multi-line message input support
 - ⏱️ Response time tracking
 - 🎯 Support for blockchain transactions and actions
+- 📱 Collapsible sidebar for better mobile experience
+- 💼 Enhanced transaction handling:
+  - Contract deployment support
+  - Smart contract interaction
+  - Token transfers with USD value estimation
+  - Gas fee estimation in ETH and USD
+  - ENS name resolution
+  - Network switching support
+- 💾 Persistent chat history with localStorage
+- 🔄 Real-time price updates for transactions
+- 📊 Transaction status tracking
 
 ## Tech Stack
 
@@ -24,7 +44,8 @@ A modern, real-time chat interface for interacting with blockchain data using Th
 - **Styling**: Tailwind CSS
 - **Web3**: ThirdWeb SDK
 - **Markdown**: React-Markdown with GFM support
-- **State Management**: React Hooks
+- **State Management**: Zustand
+- **Animations**: Framer Motion
 - **API Integration**: Server-Sent Events (SSE)
 
 ## Getting Started
@@ -76,8 +97,10 @@ src/
 ├── app/                # Next.js app router files
 ├── components/         # React components
 │   ├── chat/          # Chat-related components
-│   └── navbar/        # Navigation components
+│   ├── navbar/        # Navigation components
+│   └── sidebar/       # Sidebar components
 ├── lib/               # Utility functions and API clients
+│   └── store/         # Zustand store configurations
 └── types/             # TypeScript type definitions
 ```
 
@@ -87,6 +110,8 @@ src/
 - `MessageList`: Handles message display and thinking indicators
 - `MessageInput`: Multi-line input with Shift+Enter support
 - `MessageBubble`: Renders messages with markdown support
+- `TransactionHandler`: Manages blockchain transactions
+- `Sidebar`: Collapsible chat history management
 - `WalletButton`: ThirdWeb wallet connection
 
 ## Features in Detail
@@ -95,6 +120,25 @@ src/
 - Server-Sent Events (SSE) for real-time updates
 - Live typing indicators with timing
 - Response time tracking
+- Auto-scroll with user scroll position preservation
+
+### Transaction Management
+- Support for multiple transaction types:
+  - Token transfers
+  - Contract deployments
+  - Contract interactions
+- Real-time gas estimation
+- USD value conversion for amounts and gas fees
+- Network detection and switching
+- ENS name resolution for addresses
+- Transaction status tracking
+- Beautiful transaction UI with animations
+
+### Persistent Chat History
+- Local storage for chat persistence
+- Chat management (create, delete, clear all)
+- Timestamp tracking for conversations
+- Responsive sidebar with collapse support
 
 ### Markdown Support
 - Code blocks with syntax highlighting
@@ -106,6 +150,7 @@ src/
 - Secure wallet connection via ThirdWeb
 - Support for multiple wallet providers
 - Transaction signing capabilities
+- Network switching support
 
 ## Contributing
 
@@ -124,3 +169,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ThirdWeb](https://thirdweb.com/) for the Nebula API
 - [Tailwind CSS](https://tailwindcss.com/) for the styling system
 - [Next.js](https://nextjs.org/) for the React framework
+- [Framer Motion](https://www.framer.com/motion/) for animations
+- [Zustand](https://zustand-demo.pmnd.rs/) for state management

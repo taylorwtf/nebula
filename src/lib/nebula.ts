@@ -62,15 +62,20 @@ async function handleStreamingResponse(response: Response, onStream?: (chunk: st
           const data = JSON.parse(line.slice(6));
           console.log('Parsed SSE data:', data, 'Event:', currentEvent);
 
+          // Early type check before switch
+          if (data.type === 'sign_transaction') {
+            if (onAction) {
+              const parsedData = typeof data.data === 'string' ? JSON.parse(data.data) : data.data;
+              onAction({ ...data, data: parsedData });
+            }
+            // Don't return here - continue processing stream
+            continue;
+          }
+
           switch (currentEvent) {
             case 'delta':
               if (onStream && data.v) {
                 onStream(data.v);
-              }
-              break;
-            case 'action':
-              if (onAction) {
-                onAction(data);
               }
               break;
             case 'init':

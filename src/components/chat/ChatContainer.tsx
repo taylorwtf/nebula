@@ -1,30 +1,88 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { sendNebulaRequest } from '@/lib/nebula';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
-
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-}
+import { useChatStore } from '@/lib/store/chatStore';
+import { Chat } from '@/components/sidebar/ChatList';
+import { useWallet, useChain } from "@thirdweb-dev/react";
+import TransactionHandler from './TransactionHandler';
 
 interface ChatContainerProps {
   walletAddress: string;
 }
 
 export default function ChatContainer({ walletAddress }: ChatContainerProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { activeChat, addMessageToChat, isHydrated } = useChatStore();
+  const [mounted, setMounted] = useState(false);
+  const wallet = useWallet();
+  const chainInfo = useChain();
+  const chain = chainInfo?.chain;
+  
+  // Add new state for transaction handling
+  const [transactionData, setTransactionData] = useState<{
+    to: string;
+    value: string;
+    data: string;
+    chainId: number;
+  } | undefined>(undefined);
+  const [showTransactionModal, setShowTransactionModal] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleTransaction = async (action: any) => {
+    if (!action?.data) return;
+    setTransactionData(action.data);
+    setShowTransactionModal(true);
+  };
+
+  const handleTransactionConfirm = async () => {
+    if (!transactionData || !activeChat) return;
+
+    try {
+      const signer = await wallet?.getSigner();
+      if (!signer) {
+        throw new Error('No wallet connected');
+      }
+
+      await signer.sendTransaction({
+        to: transactionData.to,
+        value: transactionData.value,
+        data: transactionData.data,
+        chainId: parseInt(transactionData.chainId.toString())
+      });
+      
+      addMessageToChat(activeChat, {
+        role: 'assistant',
+        content: 'Transaction submitted successfully! Please wait for confirmation.'
+      });
+      
+      setShowTransactionModal(false);
+      setTransactionData(undefined);
+    } catch (error) {
+      console.error('Transaction error:', error);
+      if (error instanceof Error && activeChat) {
+        addMessageToChat(activeChat, {
+          role: 'assistant',
+          content: `Transaction failed: ${error.message}`
+        });
+      }
+    }
+  };
 
   const handleSubmit = async () => {
-    if (!input.trim() || !walletAddress) return;
+    if (!input.trim() || !walletAddress || !activeChat) return;
 
     const userMessage = input.trim();
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    
+    addMessageToChat(activeChat, { role: 'user', content: userMessage });
     setIsLoading(true);
 
     try {
@@ -34,66 +92,85 @@ export default function ChatContainer({ walletAddress }: ChatContainerProps) {
         userId: walletAddress,
         stream: true,
         onStream: (chunk) => {
-          setMessages(prev => {
-            const newMessages = [...prev];
-            const lastMessage = newMessages[newMessages.length - 1];
-            
-            // If the last message is not from the assistant, add a new one
-            if (!lastMessage || lastMessage.role !== 'assistant') {
-              return [...newMessages, { role: 'assistant', content: chunk }];
-            }
-            
-            // Otherwise, append to the existing message
-            newMessages[newMessages.length - 1] = {
-              role: 'assistant',
-              content: lastMessage.content + chunk
-            };
-            return newMessages;
-          });
+          addMessageToChat(activeChat, { role: 'assistant', content: chunk }, true);
         },
         onAction: async (action) => {
           console.log('Blockchain action received:', action);
           if (action.type === 'sign_transaction') {
-            // Add a new message for the transaction request
-            setMessages(prev => [...prev, {
-              role: 'assistant',
-              content: `Transaction request received: ${JSON.stringify(action.data, null, 2)}`
-            }]);
+            handleTransaction(action);
           }
         }
       });
     } catch (error) {
       console.error('Error:', error);
-      setMessages(prev => [...prev, {
+      addMessageToChat(activeChat, {
         role: 'assistant',
         content: 'Sorry, there was an error processing your request.'
-      }]);
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Get messages for the active chat
+  const messages = useChatStore(state => 
+    state.chats.find(chat => chat.id === activeChat)?.messages || []
+  );
+
+  if (!mounted || !isHydrated) {
+    return null;
+  }
+
   return (
-    <div className="h-full p-4">
-      <div className="h-full max-w-6xl mx-auto flex flex-col">
-        <div className="flex-1 overflow-hidden flex flex-col bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700 shadow-xl">
-          <div className="flex-1 overflow-y-auto p-4">
-            <MessageList 
-              messages={messages} 
-              isLoading={isLoading}
-            />
-          </div>
-          <div className="flex-none p-4 bg-gray-800/50 backdrop-blur-sm border-t border-gray-700">
-            <MessageInput
-              value={input}
-              onChange={setInput}
-              onSubmit={handleSubmit}
-              isLoading={isLoading}
-              disabled={!walletAddress}
-            />
-          </div>
+    <div className="h-full flex flex-col">
+      <motion.div 
+        className="flex-1 flex flex-col glass-panel mx-4 my-4 overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="flex-1 overflow-y-auto">
+          <MessageList 
+            messages={messages} 
+            isLoading={isLoading}
+          />
         </div>
-      </div>
+        <div className="flex-none border-t border-white/5">
+          <MessageInput
+            value={input}
+            onChange={setInput}
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
+            disabled={!walletAddress || !activeChat}
+          />
+        </div>
+      </motion.div>
+
+      <TransactionHandler
+        isVisible={showTransactionModal}
+        transactionData={transactionData}
+        onClose={() => {
+          setShowTransactionModal(false);
+          setTransactionData(undefined);
+          if (activeChat) {
+            addMessageToChat(activeChat, {
+              role: 'assistant',
+              content: 'Transaction cancelled by user.'
+            });
+          }
+        }}
+        onSuccess={handleTransactionConfirm}
+        onError={(error) => {
+          if (activeChat) {
+            addMessageToChat(activeChat, {
+              role: 'assistant',
+              content: `Transaction failed: ${error.message}`
+            });
+          }
+          setShowTransactionModal(false);
+          setTransactionData(undefined);
+        }}
+      />
     </div>
   );
 } 
