@@ -11,10 +11,6 @@ Experience real-time blockchain interactions with a beautiful, responsive interf
 ![Contract Deployment](public/contract.png)
 ![Transaction Handler](public/transaction.png)
 
-https://user-images.githubusercontent.com/YOUR_GITHUB_USER_ID/nebula/assets/mov.mov
-
-<video src="public/mov.mov" controls title="Nebula Chat Demo"></video>
-
 ## Features
 
 - 🌐 Real-time blockchain data interaction
