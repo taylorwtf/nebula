@@ -12,13 +12,11 @@ interface ThirdwebProviderComponentProps {
 }
 
 export default function ThirdwebProviderComponent({ children }: ThirdwebProviderComponentProps) {
-  if (!process.env.NEXT_PUBLIC_NEBULA_CLIENT_ID) {
-    throw new Error('NEXT_PUBLIC_NEBULA_CLIENT_ID is required');
-  }
-
+  const clientId = process.env.NEXT_PUBLIC_NEBULA_CLIENT_ID || "fallback-client-id";
+  
   return (
     <ThirdwebProvider
-      clientId={process.env.NEXT_PUBLIC_NEBULA_CLIENT_ID}
+      clientId={clientId}
       activeChain={activeChain}
       supportedChains={supportedChains}
       supportedWallets={[
