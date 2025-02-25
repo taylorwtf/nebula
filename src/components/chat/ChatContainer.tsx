@@ -10,6 +10,7 @@ import { Chat } from '@/components/sidebar/ChatList';
 import { useWallet, useChain } from "@thirdweb-dev/react";
 import TransactionHandler from './TransactionHandler';
 import { useApiKey } from '@/components/providers/ApiKeyProvider';
+import { useApiKeySetup } from '@/components/setup/AppSetup';
 
 interface ChatContainerProps {
   walletAddress: string;
@@ -24,6 +25,7 @@ export default function ChatContainer({ walletAddress }: ChatContainerProps) {
   const chainInfo = useChain();
   const chain = chainInfo?.chain;
   const { apiKey, clientId, isConfigured } = useApiKey();
+  const { showApiKeySetup } = useApiKeySetup();
   
   // Add new state for transaction handling
   const [transactionData, setTransactionData] = useState<{
@@ -83,6 +85,10 @@ export default function ChatContainer({ walletAddress }: ChatContainerProps) {
 
     // Check if API keys are configured
     if (!isConfigured) {
+      // Show the API key setup popup automatically
+      showApiKeySetup();
+      
+      // Also add a message to the chat
       addMessageToChat(activeChat, { 
         role: 'assistant', 
         content: 'Please set up your API keys to use this application. Your keys will be stored in memory only and will not be saved anywhere.' 
