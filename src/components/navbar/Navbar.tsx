@@ -86,7 +86,7 @@ export default function Navbar({ onWalletConnect }: NavbarProps) {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <motion.div 
-            className="flex items-center"
+            className="flex items-center -ml-4"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -96,7 +96,7 @@ export default function Navbar({ onWalletConnect }: NavbarProps) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="w-16 h-16" ref={logoRef}>
+              <div className="w-20 h-20" ref={logoRef}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" className="w-full h-full">
                   {/* Enhanced definitions */}
                   <defs>

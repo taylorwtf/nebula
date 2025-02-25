@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-if (!process.env.NEBULA_API_KEY || !process.env.NEXT_PUBLIC_NEBULA_CLIENT_ID) {
-  throw new Error('Missing required environment variables. Please check your .env file.');
-}
+// Remove the build-time check that's causing the error
+// if (!process.env.NEBULA_API_KEY || !process.env.NEXT_PUBLIC_NEBULA_CLIENT_ID) {
+//   throw new Error('Missing required environment variables. Please check your .env file.');
+// }
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { message, walletAddress, userId = "default-user", stream = true } = body;
+    const { message, walletAddress, userId = "default-user", stream = true, apiKey } = body;
 
     if (!message || !walletAddress) {
       console.error('Missing required fields:', { message, walletAddress });
@@ -17,11 +18,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Ensure API key is available
-    const apiKey = process.env.NEBULA_API_KEY;
-    if (!apiKey) {
+    // Use the API key from the request body or fall back to environment variable
+    const nebulaApiKey = apiKey || process.env.NEBULA_API_KEY;
+    if (!nebulaApiKey) {
       console.error('API key is missing');
-      throw new Error('API key is required');
+      return NextResponse.json(
+        { error: 'API key is required. Please set up your API keys in the application.' },
+        { status: 400 }
+      );
     }
 
     console.log('Sending request to Nebula API:', {
@@ -35,7 +39,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-secret-key": apiKey,
+        "x-secret-key": nebulaApiKey,
       } as HeadersInit,
       body: JSON.stringify({
         message,
