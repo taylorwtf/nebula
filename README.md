@@ -169,3 +169,45 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Next.js](https://nextjs.org/) for the React framework
 - [Framer Motion](https://www.framer.com/motion/) for animations
 - [Zustand](https://zustand-demo.pmnd.rs/) for state management
+
+## Vercel Deployment Guide
+
+This application is configured for easy deployment on Vercel with client-side API key handling.
+
+### Deployment Steps
+
+1. Fork or clone this repository to your GitHub account
+2. Sign up for [Vercel](https://vercel.com) if you haven't already
+3. Create a new project in Vercel and import your GitHub repository
+4. Set up environment variables in Vercel's project settings:
+   - `NEXT_PUBLIC_USE_CLIENT_KEYS=true` (Required)
+   - `NEBULA_API_KEY` (Optional fallback)
+   - `NEXT_PUBLIC_NEBULA_CLIENT_ID` (Optional fallback)
+5. Deploy the project
+
+### Client-Side API Key Handling
+
+This application is set up to handle Nebula API keys entirely on the client side for improved security:
+
+- 🔒 **In-Memory Only**: API keys are stored in memory only and never persisted
+- 🔄 **User-Provided**: Users enter their own API keys when using the application
+- ⚠️ **Session-Based**: Keys are cleared when the page is refreshed or closed
+- 🛡️ **Direct API Calls**: API calls are made directly from the client to the Nebula API
+
+### Getting API Keys
+
+Users will need to obtain their own API keys from ThirdWeb Nebula:
+
+1. Visit [ThirdWeb Nebula](https://thirdweb.com/nebula)
+2. Sign up or log in to your account
+3. Create a new API key in your dashboard
+4. Copy the API key and client ID
+5. Enter these in the app's API key setup page
+
+### Security Considerations
+
+- Users should understand that their API keys are stored in memory only
+- The application implements warnings before page closure
+- The API key input form uses password fields by default
+- A status indicator shows when keys are active in memory
+- Keys are never stored in cookies, localStorage, or any persistent storage

@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
+import { ConnectWallet, useAddress, useWallet } from "@thirdweb-dev/react";
 import { motion } from 'framer-motion';
+import { setConnectedWallet } from '@/services/wallet';
 
 interface WalletButtonProps {
   onAddressChange: (address: string) => void;
@@ -10,10 +11,16 @@ interface WalletButtonProps {
 
 export default function WalletButton({ onAddressChange }: WalletButtonProps) {
   const address = useAddress();
+  const wallet = useWallet();
 
   useEffect(() => {
     onAddressChange(address || '');
-  }, [address, onAddressChange]);
+    
+    // Set the connected wallet in the cache when it changes
+    if (wallet) {
+      setConnectedWallet(wallet);
+    }
+  }, [address, wallet, onAddressChange]);
 
   return (
     <motion.div
@@ -34,6 +41,11 @@ export default function WalletButton({ onAddressChange }: WalletButtonProps) {
           transition-all
           duration-200
         "
+        // In ThirdWeb v4, the ConnectWallet component automatically shows:
+        // 1. ENS name (if available)
+        // 2. User avatar (ENS or default)
+        // 3. ETH balance
+        // These features are enabled by default
       />
     </motion.div>
   );

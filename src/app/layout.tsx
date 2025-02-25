@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import AppSetup from "@/components/setup/AppSetup";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -27,9 +28,11 @@ export default function RootLayout({
     <html lang="en" className="dark h-full">
       <body className={`${inter.variable} ${outfit.variable} font-sans h-full min-h-screen flex flex-col`}>
         <Providers>
-          <div className="flex-1 relative">
-            {children}
-          </div>
+          <AppSetup>
+            <div className="flex-1 relative">
+              {children}
+            </div>
+          </AppSetup>
         </Providers>
       </body>
     </html>

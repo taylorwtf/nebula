@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import ChatList from './ChatList';
 import { useChatStore } from '@/lib/store/chatStore';
+import { useApiKey } from '@/components/providers/ApiKeyProvider';
 
 interface SidebarProps {
   walletAddress: string;
@@ -11,7 +12,17 @@ interface SidebarProps {
 
 export default function Sidebar({ walletAddress }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { chats, activeChat, addChat, deleteChat, clearAllChats, setActiveChat, isHydrated } = useChatStore();
+  const { 
+    chats, 
+    activeChat, 
+    addChat, 
+    deleteChat, 
+    clearAllChats, 
+    setActiveChat, 
+    updateChatName,
+    isHydrated 
+  } = useChatStore();
+  const { isConfigured } = useApiKey();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -92,6 +103,22 @@ export default function Sidebar({ walletAddress }: SidebarProps) {
                   </div>
                 </div>
               </div>
+              
+              {/* API Key Status Section */}
+              {isConfigured && (
+                <div className="space-y-2 animate-fadeIn">
+                  <h3 className="text-sm font-medium text-white/50">API Status</h3>
+                  <div className="glass-panel p-3 text-sm">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                      <span className="font-medium text-primary-light">API Keys Active</span>
+                    </div>
+                    <div className="mt-1 text-xs text-white/50">
+                      Keys stored in memory only
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Chat Management */}
               <div className="space-y-2">
@@ -103,6 +130,7 @@ export default function Sidebar({ walletAddress }: SidebarProps) {
                   onSelectChat={setActiveChat}
                   onDeleteChat={deleteChat}
                   onClearAllChats={clearAllChats}
+                  onUpdateChatName={updateChatName}
                 />
               </div>
             </motion.div>

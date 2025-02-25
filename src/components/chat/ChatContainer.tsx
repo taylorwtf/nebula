@@ -9,6 +9,7 @@ import { useChatStore } from '@/lib/store/chatStore';
 import { Chat } from '@/components/sidebar/ChatList';
 import { useWallet, useChain } from "@thirdweb-dev/react";
 import TransactionHandler from './TransactionHandler';
+import { useApiKey } from '@/components/providers/ApiKeyProvider';
 
 interface ChatContainerProps {
   walletAddress: string;
@@ -22,6 +23,7 @@ export default function ChatContainer({ walletAddress }: ChatContainerProps) {
   const wallet = useWallet();
   const chainInfo = useChain();
   const chain = chainInfo?.chain;
+  const { apiKey, clientId, isConfigured } = useApiKey();
   
   // Add new state for transaction handling
   const [transactionData, setTransactionData] = useState<{
@@ -79,6 +81,15 @@ export default function ChatContainer({ walletAddress }: ChatContainerProps) {
   const handleSubmit = async () => {
     if (!input.trim() || !walletAddress || !activeChat) return;
 
+    // Check if API keys are configured
+    if (!isConfigured) {
+      addMessageToChat(activeChat, { 
+        role: 'assistant', 
+        content: 'Please set up your API keys to use this application. Your keys will be stored in memory only and will not be saved anywhere.' 
+      });
+      return;
+    }
+
     const userMessage = input.trim();
     setInput('');
     
@@ -99,13 +110,15 @@ export default function ChatContainer({ walletAddress }: ChatContainerProps) {
           if (action.type === 'sign_transaction') {
             handleTransaction(action);
           }
-        }
+        },
+        apiKey: apiKey || undefined,
+        clientId: clientId || undefined
       });
     } catch (error) {
       console.error('Error:', error);
       addMessageToChat(activeChat, {
         role: 'assistant',
-        content: 'Sorry, there was an error processing your request.'
+        content: 'Sorry, there was an error processing your request. Please check your API keys.'
       });
     } finally {
       setIsLoading(false);

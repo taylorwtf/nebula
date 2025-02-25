@@ -1,4 +1,18 @@
 import { prepareTransaction, sendTransaction } from "thirdweb";
+import { useSDK } from "@thirdweb-dev/react";
+
+// Cache for the connected wallet
+let cachedWallet: any = null;
+
+// Function to set the connected wallet (call this from a React component)
+export function setConnectedWallet(wallet: any) {
+  cachedWallet = wallet;
+}
+
+// Get the cached wallet
+function getConnectedWallet() {
+  return cachedWallet;
+}
 
 export async function handleTransactionRequest(txData: {
   to: string;
@@ -7,24 +21,32 @@ export async function handleTransactionRequest(txData: {
   chainId: number;
 }) {
   try {
-    // Get wallet connection from your state management
+    // Get wallet connection from cache
     const wallet = getConnectedWallet(); 
     
     if (!wallet) {
       throw new Error('No connected wallet');
     }
 
-    const transaction = prepareTransaction({
+    // Convert data to proper format if needed
+    const hexData = txData.data.startsWith('0x') ? txData.data : `0x${txData.data}`;
+
+    // In ThirdWeb v4, we can use the wallet's signer directly
+    const signer = await wallet.getSigner();
+    
+    if (!signer) {
+      throw new Error('Could not get signer from wallet');
+    }
+
+    // Create and send the transaction using the signer
+    const tx = await signer.sendTransaction({
       to: txData.to,
-      value: BigInt(txData.value),
-      data: txData.data,
-      chain: txData.chainId,
+      value: txData.value,
+      data: hexData,
+      chainId: txData.chainId
     });
 
-    return await sendTransaction({
-      transaction,
-      account: wallet.account,
-    });
+    return tx;
   } catch (error) {
     console.error('Transaction error:', error);
     return { 

@@ -23,6 +23,8 @@ interface NebulaRequestOptions {
   stream?: boolean;
   onStream?: (chunk: string) => void;
   onAction?: (action: any) => void;
+  apiKey?: string;
+  clientId?: string;
 }
 
 async function handleStreamingResponse(response: Response, onStream?: (chunk: string) => void, onAction?: (action: any) => void) {
@@ -137,8 +139,25 @@ export async function sendNebulaRequest({
   userId = "default-user",
   stream = true,
   onStream,
-  onAction
+  onAction,
+  apiKey,
+  clientId
 }: NebulaRequestOptions) {
+  // Client-side direct API call if API key is provided
+  if (apiKey) {
+    return sendDirectNebulaRequest({
+      message,
+      walletAddress,
+      userId,
+      stream,
+      onStream,
+      onAction,
+      apiKey,
+      clientId
+    });
+  }
+  
+  // Fall back to server-side API call if no API key is provided
   const response = await fetch("/api/nebula", {
     method: "POST",
     headers: {
@@ -157,6 +176,56 @@ export async function sendNebulaRequest({
     throw new Error(`API request failed: ${response.statusText}\n${errorText}`);
   }
 
+  if (stream) {
+    return handleStreamingResponse(response, onStream, onAction);
+  }
+
+  const data = await response.json();
+  return handleNebulaResponse(data);
+}
+
+// Direct API call function that bypasses our backend
+async function sendDirectNebulaRequest({
+  message,
+  walletAddress,
+  userId = "default-user",
+  stream = true,
+  onStream,
+  onAction,
+  apiKey,
+  clientId
+}: NebulaRequestOptions) {
+  if (!apiKey) {
+    throw new Error('API key is required for direct API calls');
+  }
+
+  console.log('Making direct Nebula API call with client-provided credentials');
+  
+  const response = await fetch("https://nebula-api.thirdweb.com/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-secret-key": apiKey,
+      // Add client ID if provided
+      ...(clientId && { "x-client-id": clientId }),
+    },
+    body: JSON.stringify({
+      message,
+      user_id: userId,
+      stream,
+      execute_config: {
+        mode: "client",
+        signer_wallet_address: walletAddress,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Nebula API request failed: ${response.status} ${response.statusText} - ${errorText}`);
+  }
+
+  // Handle streaming response if streaming is enabled
   if (stream) {
     return handleStreamingResponse(response, onStream, onAction);
   }
