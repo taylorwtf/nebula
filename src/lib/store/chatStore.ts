@@ -94,6 +94,10 @@ const generateChatName = (message: string): string => {
   return truncated || 'New Chat';
 };
 
+// Check if window is defined (browser) or not (server)
+const isServer = typeof window === 'undefined';
+
+// Create store with SSR safety
 export const useChatStore = create<ChatStore>()(
   persist(
     (set) => ({
@@ -104,7 +108,7 @@ export const useChatStore = create<ChatStore>()(
 
       addChat: () => set((state) => {
         const newChat: Chat = {
-          id: crypto.randomUUID(),
+          id: isServer ? 'temp-id' : crypto.randomUUID(),
           name: 'New Chat',
           timestamp: Date.now(),
           messages: []
@@ -157,9 +161,24 @@ export const useChatStore = create<ChatStore>()(
     }),
     {
       name: 'nebula-chat-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => {
+        // Use a safe storage that works on both client and server
+        if (isServer) {
+          // Return a mock storage for SSR
+          return {
+            getItem: () => null,
+            setItem: () => null,
+            removeItem: () => null,
+          };
+        }
+        return localStorage;
+      }),
+      // Skip hydration in SSR context
+      skipHydration: isServer,
       onRehydrateStorage: () => (state) => {
-        state?.setHydrated(true)
+        if (!isServer && state) {
+          state.setHydrated(true);
+        }
       },
     }
   )

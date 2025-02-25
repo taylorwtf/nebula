@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 // Define the context type
 interface ApiKeyContextType {
@@ -31,6 +31,12 @@ export function ApiKeyProvider({ children }: { children: ReactNode }) {
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [clientId, setClientId] = useState<string | null>(null);
   const [isConfigured, setIsConfigured] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // Handle mounting state to avoid hydration issues
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   
   // Function to clear credentials (for logout/session end)
   const clearKeys = () => {
@@ -39,18 +45,19 @@ export function ApiKeyProvider({ children }: { children: ReactNode }) {
     setIsConfigured(false);
   };
   
+  // Create a stable context value
+  const contextValue = {
+    apiKey, 
+    setApiKey, 
+    clientId, 
+    setClientId, 
+    isConfigured, 
+    setIsConfigured, 
+    clearKeys
+  };
+  
   return (
-    <ApiKeyContext.Provider 
-      value={{ 
-        apiKey, 
-        setApiKey, 
-        clientId, 
-        setClientId, 
-        isConfigured, 
-        setIsConfigured, 
-        clearKeys 
-      }}
-    >
+    <ApiKeyContext.Provider value={contextValue}>
       {children}
     </ApiKeyContext.Provider>
   );
