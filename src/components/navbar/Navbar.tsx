@@ -86,7 +86,7 @@ export default function Navbar({ onWalletConnect }: NavbarProps) {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <motion.div 
-            className="flex items-center -ml-4"
+            className="flex items-center"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -96,7 +96,7 @@ export default function Navbar({ onWalletConnect }: NavbarProps) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="w-20 h-20" ref={logoRef}>
+              <div className="w-16 h-16" ref={logoRef}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" className="w-full h-full">
                   {/* Enhanced definitions */}
                   <defs>
@@ -270,7 +270,7 @@ export default function Navbar({ onWalletConnect }: NavbarProps) {
 
           {/* API Key Settings & Wallet Button */}
           <motion.div 
-            className="flex items-center gap-3"
+            className="flex items-center gap-2 md:gap-3 flex-shrink-0"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -279,10 +279,10 @@ export default function Navbar({ onWalletConnect }: NavbarProps) {
             <ThemeToggle />
             
             {/* API Key Settings Button */}
-            <div className="flex gap-2">
+            <div className="flex gap-1 md:gap-2">
               <button
                 onClick={handleSettingsClick}
-                className="flex items-center text-sm px-4 py-1.5 rounded-xl bg-primary/20 hover:bg-primary/30 text-primary-light transition-colors border border-primary/10"
+                className="flex items-center text-xs md:text-sm px-2 md:px-4 py-1.5 rounded-xl bg-primary/20 hover:bg-primary/30 text-primary-light transition-colors border border-primary/10"
               >
                 {isConfigured ? 'Update API Keys' : 'Set API Keys'}
               </button>
@@ -290,7 +290,7 @@ export default function Navbar({ onWalletConnect }: NavbarProps) {
               {isConfigured && (
                 <button
                   onClick={handleResetKeys}
-                  className="flex items-center text-sm px-4 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 transition-colors border border-red-500/10"
+                  className="flex items-center text-xs md:text-sm px-2 md:px-4 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 transition-colors border border-red-500/10"
                 >
                   Reset Keys
                 </button>

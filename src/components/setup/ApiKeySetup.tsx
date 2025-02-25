@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApiKey } from '../providers/ApiKeyProvider';
 
 interface ApiKeySetupProps {
@@ -16,6 +16,18 @@ export default function ApiKeySetup({ onClose }: ApiKeySetupProps) {
   const [showKey, setShowKey] = useState(false);
   const [error, setError] = useState('');
   const [isValidating, setIsValidating] = useState(false);
+
+  // Add escape key handler
+  useEffect(() => {
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && onClose) {
+        onClose();
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => document.removeEventListener('keydown', handleEscapeKey);
+  }, [onClose]);
 
   // Validation function
   const validateInputs = () => {
@@ -80,13 +92,23 @@ export default function ApiKeySetup({ onClose }: ApiKeySetupProps) {
     if (onClose) onClose();
   };
 
+  // Handle backdrop click to close
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget && onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] backdrop-blur-sm">
-      <div className="glass-panel max-w-md w-full p-6 shadow-2xl animate-fadeIn relative">
+    <div 
+      className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] backdrop-blur-sm overflow-y-auto p-4"
+      onClick={handleBackdropClick}
+    >
+      <div className="glass-panel max-w-md w-full p-6 shadow-2xl animate-fadeIn relative my-8">
         {/* Close button */}
         <button 
           onClick={onClose} 
-          className="absolute top-4 right-4 text-white/50 hover:text-white p-1 transition-colors rounded-full hover:bg-primary/10"
+          className="absolute top-4 right-4 text-white/50 hover:text-white p-1 transition-colors rounded-full hover:bg-primary/10 z-10"
           aria-label="Close"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
