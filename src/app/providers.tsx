@@ -2,6 +2,7 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import { ApiKeyProvider } from "../components/providers/ApiKeyProvider";
+import { ThemeProvider } from "../components/providers/ThemeProvider";
 import dynamic from 'next/dynamic';
 
 // Dynamically import ThirdWeb provider with no SSR
@@ -19,13 +20,15 @@ export function Providers({ children }: { children: ReactNode }) {
   
   return (
     <ApiKeyProvider>
-      {mounted ? (
-        <ThirdwebProviderComponent>
-          {children}
-        </ThirdwebProviderComponent>
-      ) : (
-        <>{children}</>
-      )}
+      <ThemeProvider>
+        {mounted ? (
+          <ThirdwebProviderComponent>
+            {children}
+          </ThirdwebProviderComponent>
+        ) : (
+          <>{children}</>
+        )}
+      </ThemeProvider>
     </ApiKeyProvider>
   );
 } 

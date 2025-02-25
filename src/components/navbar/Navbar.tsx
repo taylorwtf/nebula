@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import WalletButton from './WalletButton';
+import ThemeToggle from './ThemeToggle';
 import { useApiKey } from '../providers/ApiKeyProvider';
 import { useApiKeySetup } from '../setup/AppSetup';
 import { useState, useEffect, useRef } from 'react';
@@ -274,6 +275,9 @@ export default function Navbar({ onWalletConnect }: NavbarProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
           >
+            {/* Theme Toggle */}
+            <ThemeToggle />
+            
             {/* API Key Settings Button */}
             <div className="flex gap-2">
               <button

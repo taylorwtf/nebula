@@ -9,6 +9,14 @@
     --paper-light: rgba(255, 255, 255, 0.01);
     --paper-dark: rgba(0, 0, 0, 0.1);
   }
+  
+  /* Ultra dark theme variables */
+  .ultra-dark {
+    --background: #000000;
+    --foreground: #f0f0f0;
+    --paper-light: rgba(255, 255, 255, 0.01);
+    --paper-dark: rgba(0, 0, 0, 0.2);
+  }
 
   body {
     @apply bg-background text-foreground antialiased;
@@ -23,6 +31,20 @@
     background-size: 400% 400%;
     animation: aurora 45s ease infinite;
   }
+  
+  /* Ultra dark theme background */
+  .ultra-dark body {
+    background: linear-gradient(
+      135deg,
+      #000000 0%,
+      #0a0a12 25%,
+      #0c0818 50%,
+      #0a0a12 75%,
+      #000000 100%
+    );
+    background-size: 400% 400%;
+    animation: aurora 60s ease infinite;
+  }
 
   h1, h2, h3, h4, .display {
     @apply font-display font-semibold tracking-tight;
@@ -35,11 +57,24 @@
     border: 1px solid var(--paper-light);
   }
   
+  /* Ultra dark theme glass panel */
+  .ultra-dark .glass-panel {
+    @apply bg-[#080810]/90 backdrop-blur-2xl;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+  }
+  
   .glass-input {
     @apply bg-[#12121a]/50 backdrop-blur-xl rounded-xl
            focus:border-primary/20 focus:ring-1 focus:ring-primary/20
            transition-all duration-200;
     border: 1px solid var(--paper-light);
+  }
+  
+  /* Ultra dark theme glass input */
+  .ultra-dark .glass-input {
+    @apply bg-[#080810]/60 backdrop-blur-xl
+           focus:border-primary/30 focus:ring-1 focus:ring-primary/30;
+    border: 1px solid rgba(255, 255, 255, 0.02);
   }
 
   .sidebar-collapse-btn {
@@ -48,10 +83,20 @@
            hover:bg-[#12121a] transition-all duration-200
            border border-white/[0.02] shadow-lg;
   }
+  
+  /* Ultra dark theme sidebar collapse button */
+  .ultra-dark .sidebar-collapse-btn {
+    @apply bg-[#080810]/90 hover:bg-[#080810];
+  }
 
   .sidebar-collapse-btn svg {
     @apply w-4 h-4 text-primary/80;
     filter: drop-shadow(0 0 4px rgba(236, 72, 153, 0.3));
+  }
+  
+  /* Ultra dark theme sidebar collapse button svg */
+  .ultra-dark .sidebar-collapse-btn svg {
+    filter: drop-shadow(0 0 5px rgba(236, 72, 153, 0.4));
   }
 
   .gradient-border {
@@ -60,6 +105,11 @@
            before:bg-gradient-to-r before:from-primary/10 
            before:via-accent/10 before:to-primary/10
            before:opacity-0 before:transition-opacity;
+  }
+  
+  /* Ultra dark theme gradient border */
+  .ultra-dark .gradient-border {
+    @apply before:from-primary/15 before:via-accent/15 before:to-primary/15;
   }
 
   .gradient-border:hover,
@@ -74,6 +124,12 @@
            disabled:from-gray-800 disabled:to-gray-900 
            disabled:shadow-none disabled:cursor-not-allowed;
   }
+  
+  /* Ultra dark theme primary button */
+  .ultra-dark .primary-button {
+    @apply from-primary to-accent/95
+           hover:shadow-glow-strong;
+  }
 
   .secondary-button {
     @apply px-6 py-3 bg-[#12121a]/50 hover:bg-[#12121a]/70
@@ -82,11 +138,23 @@
            disabled:bg-[#12121a]/30 disabled:cursor-not-allowed;
     border: 1px solid var(--paper-light);
   }
+  
+  /* Ultra dark theme secondary button */
+  .ultra-dark .secondary-button {
+    @apply bg-[#080810]/60 hover:bg-[#080810]/80;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+  }
 
   .nebula-heading {
     @apply font-display font-bold bg-gradient-to-r from-primary-light via-accent-light to-primary-light 
            bg-clip-text text-transparent bg-[length:200%_auto] 
            animate-[gradient_8s_linear_infinite];
+  }
+  
+  /* Ultra dark theme nebula heading */
+  .ultra-dark .nebula-heading {
+    @apply from-primary via-accent-light to-primary
+           drop-shadow-[0_0_3px_rgba(124,58,237,0.3)];
   }
 }
 
@@ -123,8 +191,26 @@
   background: rgba(236, 72, 153, 0.3);
 }
 
+/* Ultra dark theme scrollbar */
+.ultra-dark ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.ultra-dark ::-webkit-scrollbar-thumb {
+  background: rgba(236, 72, 153, 0.3);
+}
+
+.ultra-dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(236, 72, 153, 0.4);
+}
+
 /* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(236, 72, 153, 0.2) rgba(0, 0, 0, 0.2);
+}
+
+/* Ultra dark theme Firefox scrollbar */
+.ultra-dark * {
+  scrollbar-color: rgba(236, 72, 153, 0.3) rgba(0, 0, 0, 0.3);
 }
